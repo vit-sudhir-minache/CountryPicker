@@ -81,6 +81,11 @@ extension CountryManager {
         countries.append(contentsOf: fetchedCountries)
     }
     
+    func allCountries(_ favoriteCountriesLocaleIdentifiers: [String]) -> [Country] {
+        favoriteCountriesLocaleIdentifiers
+            .compactMap { country(withCode: $0) } + countries
+    }
+    
     func resetLastSelectedCountry() {
         lastCountrySelected = nil
     }
