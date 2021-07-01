@@ -390,8 +390,10 @@ class CountryCell: UITableViewCell {
         return stackView
     }()
     
+    
     private(set) var countryFlagStackView: UIStackView = UIStackView()
     private var countryCheckStackView: UIStackView = UIStackView()
+    
     
     // MARK: - Model
     var country: Country! {
@@ -416,7 +418,7 @@ extension CountryCell {
         countryCheckStackView.addArrangedSubview(checkMarkImageView)
         
         countryInfoStackView.addArrangedSubview(nameLabel)
-        countryCheckStackView.addArrangedSubview(diallingCodeLabel)
+        countryInfoStackView.addArrangedSubview(diallingCodeLabel)
         
         countryContentStackView.addArrangedSubview(countryFlagStackView)
         countryContentStackView.addArrangedSubview(countryInfoStackView)
