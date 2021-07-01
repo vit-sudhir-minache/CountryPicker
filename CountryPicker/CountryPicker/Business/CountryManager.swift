@@ -15,7 +15,6 @@ public enum CountryFilterOption {
     case countryDialCode
 }
 
-
 open class CountryManager {
     
     public var countries = [Country]()
@@ -96,8 +95,6 @@ public extension CountryManager {
     }
 }
 
-
-// MARK: - Country Filter Methods
 public extension CountryManager {
     
     func country(withCode code: String) -> Country? {
@@ -125,7 +122,6 @@ public extension CountryManager {
     }
 }
 
-// MARK: - CountryFilterOption Methods
 public extension CountryManager {
     
     func addFilter(_ filter: CountryFilterOption) {
@@ -143,7 +139,6 @@ public extension CountryManager {
 }
 
 
-// MARK: - Error Handling
 extension String: Error {}
 extension String: LocalizedError {
     public var errorDescription: String? { return self }
