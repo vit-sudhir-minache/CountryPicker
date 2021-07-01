@@ -7,13 +7,13 @@
 
 import UIKit
 
-enum CountryFlagStyle {
+public enum CountryFlagStyle {
     case corner
     case circular
     case normal
 }
 
-class CountryPickerVC: UIViewController {
+public class CountryPickerVC: UIViewController {
     
     internal var countries = [Country]() {
         didSet {
@@ -95,7 +95,7 @@ class CountryPickerVC: UIViewController {
         definesPresentationContext = true
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
             view.backgroundColor = UIColor.systemBackground
@@ -121,7 +121,7 @@ class CountryPickerVC: UIViewController {
         setUpsSearchController()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         if #available(iOS 11.0, *) {
             navigationItem.hidesSearchBarWhenScrolling = false
@@ -130,7 +130,7 @@ class CountryPickerVC: UIViewController {
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if #available(iOS 11.0, *) {
             navigationItem.hidesSearchBarWhenScrolling = true
@@ -212,11 +212,11 @@ internal extension CountryPickerVC {
 
 extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return applySearch ? filterCountries.count : countries.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CountryCell.reuseIdentifier) as? CountryCell else {
             fatalError("Cell with Identifier CountryTableViewCell cann't dequed")
@@ -263,7 +263,7 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     // MARK: - TableView Delegate
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var selectedCountry = countries[indexPath.row]
         var dismissWithAnimation = true
         
@@ -278,7 +278,7 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
         dismiss(animated: dismissWithAnimation, completion: nil)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath)
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath)
         -> CGFloat {
         return 60.0
     }
@@ -288,7 +288,7 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
 // MARK: - UISearchBarDelegate
 extension CountryPickerVC: UISearchBarDelegate {
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         let searchTextTrimmed = searchBar.text?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -306,14 +306,14 @@ extension CountryPickerVC: UISearchBarDelegate {
         filterCountries.append(contentsOf: filteredCountries)
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         searchBar.text = ""
         applySearch = false
         tableView.reloadData()
     }
 
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if searchBar.text == "" {
           tableView.reloadData()
         }
