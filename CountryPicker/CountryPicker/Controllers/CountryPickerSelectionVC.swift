@@ -41,7 +41,7 @@ public class CountryPickerSectionVC: CountryPickerVC {
     }
     
     @discardableResult
-    override class func presentController(on viewController: UIViewController,
+    override public class func presentController(on viewController: UIViewController,
                                                handler:@escaping (_ country: Country) -> Void) -> CountryPickerSectionVC {
         let controller = CountryPickerSectionVC()
         controller.presentingVC = viewController
