@@ -7,7 +7,7 @@
 import Foundation
 import UIKit
 
-class Country {
+public class Country {
 
      var countryCode: String
      var countryName: String

@@ -7,26 +7,26 @@
 
 import UIKit
 
-class CountryPickerSectionVC: CountryPickerVC {
+public class CountryPickerSectionVC: CountryPickerVC {
 
     private(set) var sections: [Character] = []
     private(set) var sectionCoutries =  [Character: [Country]]()
     private(set) var searchHeaderTitle: Character = "A"
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = nil
         tableView.delegate = nil
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchSectionCountries()
         tableView.dataSource = self
         tableView.delegate = self
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         if #available(iOS 11.0, *) {
             navigationItem.hidesSearchBarWhenScrolling = true
         }
@@ -113,7 +113,7 @@ extension CountryPickerSectionVC {
         return sections[section].description
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CountryCell.reuseIdentifier) as? CountryCell else {
             fatalError("Cell with Identifier CountryTableViewCell cann't dequed")
@@ -153,7 +153,7 @@ extension CountryPickerSectionVC {
 
 // MARK: - Override SearchBar Delegate
 extension CountryPickerSectionVC {
-    override func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    public override func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         super.searchBar(searchBar, textDidChange: searchText)
         if !searchText.isEmpty {
             searchHeaderTitle = searchText.first ?? "A"
@@ -163,7 +163,7 @@ extension CountryPickerSectionVC {
 
 // MARK: - TableViewDelegate
 extension CountryPickerSectionVC {
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch applySearch {
         case true:
             let country = filterCountries[indexPath.row]
