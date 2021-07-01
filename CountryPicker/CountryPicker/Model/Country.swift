@@ -45,7 +45,7 @@ open class Country {
     public init(countryCode code: String) {
         self.countryCode = code
         countryName = mapCountryName(self.countryCode)
-        imagePath = "CountryPickerController.bundle/\(self.countryCode)"
+        imagePath = "CountryPickerVC.bundle/\(self.countryCode)"
     }
 
     func countryName(with locale: Locale) -> String {

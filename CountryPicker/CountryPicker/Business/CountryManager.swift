@@ -137,3 +137,15 @@ extension String: Error {}
 extension String: LocalizedError {
     public var errorDescription: String? { return self }
 }
+//// MARK: - Array Extenstion
+extension Array where Element: Equatable {
+    func removeDuplicates() -> [Element] {
+        var uniqueValues = [Element]()
+        forEach {
+            if !uniqueValues.contains($0) {
+                uniqueValues.append($0)
+            }
+        }
+        return uniqueValues
+    }
+}

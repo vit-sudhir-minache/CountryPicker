@@ -287,7 +287,6 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
         -> CGFloat {
         return 60.0
     }
-    
 }
 
 // MARK: - UISearchBarDelegate
@@ -319,6 +318,10 @@ extension CountryPickerVC: UISearchBarDelegate {
     }
 
     public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if searchBar.text == ""{
+            tableView.reloadData()
+        }
+        searchBar.resignFirstResponder()
         searchBar.endEditing(true)
     }
 }
