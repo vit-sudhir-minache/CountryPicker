@@ -7,23 +7,22 @@
 import Foundation
 import UIKit
 
-public class Country {
+open class Country {
 
-     var countryCode: String
-     var countryName: String
-     var dialingCode: String? {
+    open var countryCode: String
+    open var countryName: String
+    open var dialingCode: String? {
         guard let digitCountrycode = digitCountrycode else {
             return nil
         }
-        
         return digitCountrycode
     }
     
-    var digitCountrycode: String? {
+    open var digitCountrycode: String? {
         return isoToDigitCountryCodeDictionary[countryCode]
     }
     
-    var flag: UIImage? {
+    open var flag: UIImage? {
         if image != nil {
             return image
         }
@@ -42,10 +41,11 @@ public class Country {
     var imagePath: String
     private var image: UIImage?
 
-    init(countryCode code: String) {
+    // MARK: - Functions
+    public init(countryCode code: String) {
         self.countryCode = code
         countryName = mapCountryName(self.countryCode)
-        imagePath = "CountryPickerVC.bundle/\(self.countryCode)"
+        imagePath = "CountryPickerController.bundle/\(self.countryCode)"
     }
 
     func countryName(with locale: Locale) -> String {

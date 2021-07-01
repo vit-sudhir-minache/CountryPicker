@@ -7,26 +7,26 @@
 
 import UIKit
 
-public class CountryPickerSectionVC: CountryPickerVC {
+open class CountryPickerSectionVC: CountryPickerVC {
 
     private(set) var sections: [Character] = []
     private(set) var sectionCoutries =  [Character: [Country]]()
     private(set) var searchHeaderTitle: Character = "A"
 
-    public override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = nil
         tableView.delegate = nil
     }
 
-    public override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         fetchSectionCountries()
         tableView.dataSource = self
         tableView.delegate = self
     }
 
-    public override func viewDidAppear(_ animated: Bool) {
+    open override func viewDidAppear(_ animated: Bool) {
         if #available(iOS 11.0, *) {
             navigationItem.hidesSearchBarWhenScrolling = true
         }
@@ -41,7 +41,7 @@ public class CountryPickerSectionVC: CountryPickerVC {
     }
     
     @discardableResult
-    override public class func presentController(on viewController: UIViewController,
+    open override class func presentController(on viewController: UIViewController,
                                                handler:@escaping (_ country: Country) -> Void) -> CountryPickerSectionVC {
         let controller = CountryPickerSectionVC()
         controller.presentingVC = viewController
@@ -52,11 +52,10 @@ public class CountryPickerSectionVC: CountryPickerVC {
         
         return controller
     }
-
 }
 
+// MARK: - Internal Methods
 internal extension CountryPickerSectionVC {
-    
     func scrollToCountry(_ country: Country, withSection sectionTitle: Character, animated: Bool = false) {
         
         if applySearch { return }
@@ -118,12 +117,14 @@ extension CountryPickerSectionVC {
         guard !applySearch else {
             return String(searchHeaderTitle)
         }
+        
         if isFavoriteEnable {
             if section == 0 {
                 return nil
             }
             return sections[section-1].description
         }
+
         return sections[section].description
     }
     
@@ -162,7 +163,6 @@ extension CountryPickerSectionVC {
         
         return cell
     }
-    
     
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return sections.map {String($0)}
@@ -216,11 +216,11 @@ extension CountryPickerSectionVC {
     private func triggerCallbackAndDismiss(with country: Country) {
         callBack?(country)
         CountryManager.shared.lastCountrySelected = country
-        self.view.endEditing(true)
         self.dismiss(animated: true, completion: nil)
     }
 }
 
+// MARK: - Array Extenstion
 extension Array where Element: Equatable {
     func removeDuplicates() -> [Element] {
         var uniqueValues = [Element]()
@@ -232,4 +232,3 @@ extension Array where Element: Equatable {
         return uniqueValues
     }
 }
-

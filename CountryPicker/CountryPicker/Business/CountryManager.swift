@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-enum CountryFilterOption {
+
+public enum CountryFilterOption {
     case countryName
     case countryCode
     case countryDialCode
 }
 
-class CountryManager {
+open class CountryManager {
     
-    var countries = [Country]()
-    
+    public var countries = [Country]()
     private var countriesFilePath: String? {
         #if SWIFT_PACKAGE
             let bundle = Bundle.module
@@ -29,7 +29,7 @@ class CountryManager {
         return countriesPath
     }
     
-    static var shared: CountryManager = {
+    public static var shared: CountryManager = {
         let countryManager = CountryManager()
         do {
             try countryManager.loadCountries()
@@ -41,7 +41,7 @@ class CountryManager {
         return countryManager
     }()
     
-    var currentCountry: Country? {
+    open var currentCountry: Country? {
         guard let countryCode = Locale.current.regionCode else {
             return nil
         }
@@ -50,49 +50,49 @@ class CountryManager {
     
     
     internal var lastCountrySelected: Country?
-    
     internal let defaultFilter: CountryFilterOption = .countryName
-    
     internal var filters: Set<CountryFilterOption> = [.countryName]
         
     private init() {}
-
 }
 
-extension CountryManager {
-    
+
+public extension CountryManager {
+  
     func fetchCountries(fromURLPath path: URL) throws -> [Country] {
         guard let rawData = try? Data(contentsOf: path),
             let countryCodes = try? PropertyListSerialization.propertyList(from: rawData, format: nil) as? [String] else {
             throw "[CountryManager] ❌ Missing countries plist file from path: \(path)"
         }
         
+        // Sort country list by `countryName`
         let sortedCountries = countryCodes.map { Country(countryCode: $0) }.sorted { $0.countryName < $1.countryName }
+        
         #if DEBUG
         print("[CountryManager] ✅ Succefully prepared list of \(sortedCountries.count) countries")
         #endif
+        
         return sortedCountries
     }
-   
+    
     func loadCountries() throws {
         let url = URL(fileURLWithPath: countriesFilePath ?? "")
         let fetchedCountries = try fetchCountries(fromURLPath: url)
         countries.removeAll()
         countries.append(contentsOf: fetchedCountries)
     }
-    
+
     func allCountries(_ favoriteCountriesLocaleIdentifiers: [String]) -> [Country] {
         favoriteCountriesLocaleIdentifiers
             .compactMap { country(withCode: $0) } + countries
     }
-    
     func resetLastSelectedCountry() {
         lastCountrySelected = nil
     }
 }
 
-extension CountryManager {
-    
+public extension CountryManager {
+  
     func country(withCode code: String) -> Country? {
          countries.first(where: { $0.countryCode.lowercased() == code.lowercased() })
     }
@@ -118,33 +118,22 @@ extension CountryManager {
     }
 }
 
-extension CountryManager {
+public extension CountryManager {
     
     func addFilter(_ filter: CountryFilterOption) {
         filters.insert(filter)
     }
-    
     func removeFilter(_ filter: CountryFilterOption) {
         filters.remove(filter)
     }
-
     func clearAllFilters() {
         filters.removeAll()
         filters.insert(defaultFilter) // Set default filter option
     }
 }
 
-
+// MARK: - Error Handling
 extension String: Error {}
 extension String: LocalizedError {
     public var errorDescription: String? { return self }
-}
-
-extension UIViewController {
-    func startLifeCycle() {
-        _ = view
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
-        beginAppearanceTransition(true, animated: true)
-    }
 }
