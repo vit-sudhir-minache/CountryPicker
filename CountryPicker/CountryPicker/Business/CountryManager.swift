@@ -2,22 +2,21 @@
 //  File.swift
 //  
 //
-//  Created by SUDHIR on 01/07/21.
+//  Created on 01/07/21.
 //
 
 import Foundation
 import UIKit
 
-
-public enum CountryFilterOption {
+enum CountryFilterOption {
     case countryName
     case countryCode
     case countryDialCode
 }
 
-open class CountryManager {
+class CountryManager {
     
-    public var countries = [Country]()
+    var countries = [Country]()
     
     private var countriesFilePath: String? {
         #if SWIFT_PACKAGE
@@ -30,7 +29,7 @@ open class CountryManager {
         return countriesPath
     }
     
-    public static var shared: CountryManager = {
+    static var shared: CountryManager = {
         let countryManager = CountryManager()
         do {
             try countryManager.loadCountries()
@@ -42,7 +41,7 @@ open class CountryManager {
         return countryManager
     }()
     
-    open var currentCountry: Country? {
+    var currentCountry: Country? {
         guard let countryCode = Locale.current.regionCode else {
             return nil
         }
@@ -60,8 +59,7 @@ open class CountryManager {
 
 }
 
-
-public extension CountryManager {
+extension CountryManager {
     
     func fetchCountries(fromURLPath path: URL) throws -> [Country] {
         guard let rawData = try? Data(contentsOf: path),
@@ -70,11 +68,9 @@ public extension CountryManager {
         }
         
         let sortedCountries = countryCodes.map { Country(countryCode: $0) }.sorted { $0.countryName < $1.countryName }
-        
         #if DEBUG
         print("[CountryManager] ✅ Succefully prepared list of \(sortedCountries.count) countries")
         #endif
-        
         return sortedCountries
     }
    
@@ -84,18 +80,13 @@ public extension CountryManager {
         countries.removeAll()
         countries.append(contentsOf: fetchedCountries)
     }
-
-    func allCountries(_ favoriteCountriesLocaleIdentifiers: [String]) -> [Country] {
-        favoriteCountriesLocaleIdentifiers
-            .compactMap { country(withCode: $0) } + countries
-    }
     
     func resetLastSelectedCountry() {
         lastCountrySelected = nil
     }
 }
 
-public extension CountryManager {
+extension CountryManager {
     
     func country(withCode code: String) -> Country? {
          countries.first(where: { $0.countryCode.lowercased() == code.lowercased() })
@@ -122,7 +113,7 @@ public extension CountryManager {
     }
 }
 
-public extension CountryManager {
+extension CountryManager {
     
     func addFilter(_ filter: CountryFilterOption) {
         filters.insert(filter)

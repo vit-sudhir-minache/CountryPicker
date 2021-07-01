@@ -2,12 +2,12 @@
 //  File.swift
 //  
 //
-//  Created by SUDHIR on 01/07/21.
+//  Created  on 01/07/21.
 //
 
 import Foundation
 
-struct CountryPickerEngine {
+struct CountryPickerFilter {
     let countries: [Country]
     let filterOptions: Set<CountryFilterOption>
     

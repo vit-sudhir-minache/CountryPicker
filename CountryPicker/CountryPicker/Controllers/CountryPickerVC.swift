@@ -2,18 +2,18 @@
 //  CountryPicker.swift
 //
 //
-//  Created by SUDHIR on 30/06/21.
+//  Created  on 30/06/21.
 
 
 import UIKit
 
-public enum CountryFlagStyle {
+enum CountryFlagStyle {
     case corner
     case circular
     case normal
 }
 
-open class CountryPickerVC: UIViewController {
+class CountryPickerVC: UIViewController {
     
     internal var countries = [Country]() {
         didSet {
@@ -27,7 +27,7 @@ open class CountryPickerVC: UIViewController {
     }
     
     internal var applySearch = false
-    public var callBack: (( _ choosenCountry: Country) -> Void)?
+    var callBack: (( _ choosenCountry: Country) -> Void)?
     
     #if SWIFT_PACKAGE
         let bundle = Bundle.module
@@ -39,18 +39,7 @@ open class CountryPickerVC: UIViewController {
     internal var presentingVC: UIViewController?
     internal var searchController = UISearchController(searchResultsController: nil)
     internal let tableView =  UITableView()
-    public var favoriteCountriesLocaleIdentifiers = [String]() {
-        didSet {
-            self.loadCountries()
-            self.tableView.reloadData()
-        }
-    }
-    internal var isFavoriteEnable: Bool { return !favoriteCountries.isEmpty }
-    internal var favoriteCountries: [Country] {
-        return self.favoriteCountriesLocaleIdentifiers
-            .compactMap { CountryManager.shared.country(withCode: $0) }
-    }
-
+    
     public var statusBarStyle: UIStatusBarStyle? = .default
     public var isStatusBarVisible = true
     
@@ -106,7 +95,7 @@ open class CountryPickerVC: UIViewController {
         definesPresentationContext = true
     }
     
-    override open func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
             view.backgroundColor = UIColor.systemBackground
@@ -132,18 +121,21 @@ open class CountryPickerVC: UIViewController {
         setUpsSearchController()
     }
     
-    override open func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        loadCountries()
         if #available(iOS 11.0, *) {
+            navigationItem.hidesSearchBarWhenScrolling = false
+        } else {
             navigationItem.hidesSearchBarWhenScrolling = false
         }
     }
     
-    override open func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if #available(iOS 11.0, *) {
             navigationItem.hidesSearchBarWhenScrolling = true
+        } else {
+            navigationItem.hidesSearchBarWhenScrolling = false
         }
         
         /// Request for previous country and automatically scroll table view to item
@@ -189,7 +181,7 @@ open class CountryPickerVC: UIViewController {
     }
     
     @discardableResult
-    open class func presentController(on viewController: UIViewController,
+    class func presentController(on viewController: UIViewController,
                                       handler:@escaping (_ country: Country) -> Void) -> CountryPickerVC {
         let controller = CountryPickerVC()
         controller.presentingVC = viewController
@@ -205,26 +197,10 @@ open class CountryPickerVC: UIViewController {
     }
 }
 
-
-// MARK: - Internal Methods
 internal extension CountryPickerVC {
 
-    func loadCountries() {
-        countries = CountryManager.shared.allCountries(favoriteCountriesLocaleIdentifiers)
-    }
-    
-    ///
-    /// Automatically scrolls the `TableView` to a particular section on expected chosen country.
-    ///
-    /// Under the hood, it tries to find several indexes for section title and expectd chosen country otherwise execution stops.
-    /// Then constructs an `IndexPath` and scrolls the rows to that particular path with animation (If enabled).
-    ///
-    /// - Parameter country: Expected chosen country
-    /// - Parameter animated: Scrolling animation state and by default its set to `False`.
-    
     func scrollToCountry(_ country: Country, animated: Bool = false) {
         
-        // Find country index
         let countryMatchIndex = countries.firstIndex(where: { $0.countryCode == country.countryCode})
         
         if let itemIndexPath = countryMatchIndex {
@@ -234,15 +210,13 @@ internal extension CountryPickerVC {
     }
 }
 
-
-// MARK: - TableView DataSource
 extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return applySearch ? filterCountries.count : countries.count
     }
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CountryCell.reuseIdentifier) as? CountryCell else {
             fatalError("Cell with Identifier CountryTableViewCell cann't dequed")
@@ -289,7 +263,7 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     // MARK: - TableView Delegate
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var selectedCountry = countries[indexPath.row]
         var dismissWithAnimation = true
         
@@ -304,7 +278,7 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
         dismiss(animated: dismissWithAnimation, completion: nil)
     }
     
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath)
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath)
         -> CGFloat {
         return 60.0
     }
@@ -314,7 +288,7 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
 // MARK: - UISearchBarDelegate
 extension CountryPickerVC: UISearchBarDelegate {
     
-    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         let searchTextTrimmed = searchBar.text?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -328,30 +302,31 @@ extension CountryPickerVC: UISearchBarDelegate {
         applySearch = true
         filterCountries.removeAll()
         
-        let filteredCountries = CountryPickerEngine().filterCountries(searchText: searchText)
-    
-        // Append filtered countries
+        let filteredCountries = CountryPickerFilter().filterCountries(searchText: searchText)
         filterCountries.append(contentsOf: filteredCountries)
     }
     
-    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         searchBar.text = ""
         applySearch = false
         tableView.reloadData()
     }
 
-    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if searchBar.text == "" {
+          tableView.reloadData()
+        }
+        searchBar.resignFirstResponder()
         searchBar.endEditing(true)
     }
 }
 
-
+// MARK: - TabaleViewCell Class
 class CountryCell: UITableViewCell {
 
-    // MARK: - Variables
     static let reuseIdentifier = String(describing: CountryCell.self)
-
+    
     let checkMarkImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -396,7 +371,6 @@ class CountryCell: UITableViewCell {
         return imageView
     }()
 
-    
     // MARK: - Private properties
     private var countryContentStackView: UIStackView = {
         let stackView = UIStackView()
@@ -416,10 +390,8 @@ class CountryCell: UITableViewCell {
         return stackView
     }()
     
-    
     private(set) var countryFlagStackView: UIStackView = UIStackView()
     private var countryCheckStackView: UIStackView = UIStackView()
-    
     
     // MARK: - Model
     var country: Country! {
@@ -440,15 +412,12 @@ extension CountryCell {
     
     func setupViews() {
         
-        // Add country flag & check mark views
         countryFlagStackView.addArrangedSubview(flagImageView)
         countryCheckStackView.addArrangedSubview(checkMarkImageView)
         
-        // Add country info sub views
         countryInfoStackView.addArrangedSubview(nameLabel)
-        countryInfoStackView.addArrangedSubview(diallingCodeLabel)
+        countryCheckStackView.addArrangedSubview(diallingCodeLabel)
         
-        // Add stackviews into country content stack
         countryContentStackView.addArrangedSubview(countryFlagStackView)
         countryContentStackView.addArrangedSubview(countryInfoStackView)
         countryContentStackView.addArrangedSubview(countryCheckStackView)
@@ -456,7 +425,6 @@ extension CountryCell {
         addSubview(countryContentStackView)
         addSubview(separatorLineView)
         
-        // Configure constraints on country content stack
         if #available(iOS 11.0, *) {
             countryContentStackView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15).isActive = true
             countryContentStackView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -30).isActive = true
@@ -469,60 +437,40 @@ extension CountryCell {
             countryContentStackView.bottomAnchor.constraint(equalTo: separatorLineView.topAnchor, constant: -4).isActive = true
         }
         
-        // Configure constraints on separator view
         separatorLineView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
         separatorLineView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         separatorLineView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
     }
     
-    
-    /// Apply some styling on flag image view
-    ///
-    /// - Note: By default, `CountryFlagStyle.nromal` style is applied on the flag image view.
-    ///
-    /// - Parameter style: Flag style kind
-    
     func applyFlagStyle(_ style: CountryFlagStyle) {
         
-        // Cleae all constraints from flag image view
         NSLayoutConstraint.deactivate(flagImageView.constraints)
         layoutIfNeeded()
         
         switch style {
         case .corner:
-            // Corner style
             flagImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
             flagImageView.heightAnchor.constraint(equalToConstant: 26).isActive = true
             flagImageView.layer.cornerRadius = 4
             flagImageView.clipsToBounds = true
             flagImageView.contentMode = .scaleAspectFill
         case .circular:
-            // Circular style
             flagImageView.widthAnchor.constraint(equalToConstant: 34).isActive = true
             flagImageView.heightAnchor.constraint(equalToConstant: 34).isActive = true
             flagImageView.layer.cornerRadius = 34 / 2
             flagImageView.clipsToBounds = true
             flagImageView.contentMode = .scaleAspectFill
         default:
-            // Apply default styling
             flagImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
             flagImageView.heightAnchor.constraint(equalToConstant: 26).isActive = true
             flagImageView.contentMode = .scaleToFill
         }
     }
     
-    
-    /// Hides dialing code label
-    ///
-    /// - Parameter state: Visibility boolean state. By default it's set to `True`
     func hideDialCode(_ state: Bool = true) {
         diallingCodeLabel.isHidden = state
     }
-    
-    
-    /// Hides country flag view
-    ///
-    /// - Parameter state: Visibility boolean state. By default it's set to `True`
+
     func hideFlag(_ state: Bool = true) {
         countryFlagStackView.isHidden = state
     }

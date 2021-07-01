@@ -2,28 +2,28 @@
 //  Country.swift
 //  
 //
-//  Created by SUDHIR on 30/06/21.
+//  Created  on 30/06/21.
 
 import Foundation
 import UIKit
 
-open class Country {
+class Country {
 
-    open var countryCode: String
-    open var countryName: String
-    open var dialingCode: String? {
+     var countryCode: String
+     var countryName: String
+     var dialingCode: String? {
         guard let digitCountrycode = digitCountrycode else {
             return nil
         }
         
-        return "+" + digitCountrycode
+        return digitCountrycode
     }
     
-    open var digitCountrycode: String? {
+    var digitCountrycode: String? {
         return isoToDigitCountryCodeDictionary[countryCode]
     }
     
-    open var flag: UIImage? {
+    var flag: UIImage? {
         if image != nil {
             return image
         }
@@ -42,8 +42,7 @@ open class Country {
     var imagePath: String
     private var image: UIImage?
 
-    // MARK: - Functions
-    public init(countryCode code: String) {
+    init(countryCode code: String) {
         self.countryCode = code
         countryName = mapCountryName(self.countryCode)
         imagePath = "CountryPickerVC.bundle/\(self.countryCode)"
