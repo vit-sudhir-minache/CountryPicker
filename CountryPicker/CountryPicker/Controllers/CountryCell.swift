@@ -29,6 +29,7 @@ class CountryCell: UITableViewCell {
         let label = UILabel()
         label.adjustsFontForContentSizeCategory = true
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return label
     }()
 
@@ -69,7 +70,7 @@ class CountryCell: UITableViewCell {
     private var countryInfoStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.spacing = 5
-        stackView.axis = .vertical
+        stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fill
         return stackView
@@ -105,7 +106,8 @@ extension CountryCell {
         
         countryContentStackView.addArrangedSubview(countryFlagStackView)
         countryContentStackView.addArrangedSubview(countryInfoStackView)
-        countryContentStackView.addArrangedSubview(countryCheckStackView)
+        //MARK:- IF YOU NEED CHECKBOX SO JUS UNCOMMENT THIS CODE 
+//        countryContentStackView.addArrangedSubview(countryCheckStackView)
         
         addSubview(countryContentStackView)
         addSubview(separatorLineView)
