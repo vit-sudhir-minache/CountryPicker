@@ -13,7 +13,7 @@ public enum CountryFlagStyle {
     case normal
 }
 open class CountryPickerVC: UIViewController {
-    
+    public var navigationTitle :  String?
     internal var countries = [Country]() {
         didSet {
             tableView.reloadData()
@@ -105,6 +105,7 @@ open class CountryPickerVC: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        self.title = navigationTitle ?? "Country"
         if #available(iOS 13.0, *) {
             view.backgroundColor = UIColor.systemBackground
         } else {
