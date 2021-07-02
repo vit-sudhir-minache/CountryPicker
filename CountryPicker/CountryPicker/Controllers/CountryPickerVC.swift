@@ -97,13 +97,19 @@ open class CountryPickerVC: UIViewController {
         searchController.searchBar.sizeToFit()
         searchController.searchBar.delegate = self
         
+        if #available(iOS 12.0, *) {
+            searchController.obscuresBackgroundDuringPresentation = false
+        }else{
+            searchController.dimsBackgroundDuringPresentation = false
+        }
+        
         if #available(iOS 11.0, *) {
             self.navigationItem.searchController = searchController
         } else {
             tableView.tableHeaderView = searchController.searchBar
         }
         
-        definesPresentationContext = true
+        definesPresentationContext = false
     }
     
     override open func viewDidLoad() {
@@ -234,18 +240,10 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
         
         cell.accessoryType = .none
         
-        var country: Country
-        
-        if applySearch {
-            country = filterCountries[indexPath.row]
-        } else {
-            country = countries[indexPath.row]
-        }
-        
-//        if let lastSelectedCountry = CountryManager.shared.lastCountrySelected {
+        //        if let lastSelectedCountry = CountryManager.shared.lastCountrySelected {
 //        }
         
-        cell.country = country
+        cell.country = applySearch ? filterCountries[indexPath.row] : countries[indexPath.row]
         setUpCellProperties(cell: cell)
         
         return cell
@@ -270,18 +268,11 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - TableView Delegate
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var selectedCountry = countries[indexPath.row]
-        var dismissWithAnimation = true
-        
-        if applySearch {
-            selectedCountry = filterCountries[indexPath.row]
-            dismissWithAnimation = false
-        }
-        
-        callBack?(selectedCountry)
-//        CountryManager.shared.lastCountrySelected = selectedCountry
-            
-        dismiss(animated: dismissWithAnimation, completion: nil)
+        tableView.deselectRow(at: indexPath, animated: true)
+        callBack?(applySearch ? filterCountries[indexPath.row] : countries[indexPath.row] )
+        searchController.isActive = false
+        searchController.searchBar.resignFirstResponder()
+        dismiss(animated: true, completion: nil)
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath)
