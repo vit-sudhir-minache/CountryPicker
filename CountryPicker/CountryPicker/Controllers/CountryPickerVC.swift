@@ -14,11 +14,13 @@ public enum CountryFlagStyle {
 }
 open class CountryPickerVC: UIViewController {
     public var navigationTitle :  String?
+   
     internal var countries = [Country]() {
         didSet {
             tableView.reloadData()
         }
     }
+    
     internal var filterCountries = [Country]() {
         didSet {
             tableView.reloadData()
@@ -26,6 +28,7 @@ open class CountryPickerVC: UIViewController {
     }
     
     internal var applySearch = false
+    
     public var callBack: (( _ choosenCountry: Country) -> Void)?
     
     #if SWIFT_PACKAGE
@@ -143,9 +146,9 @@ open class CountryPickerVC: UIViewController {
             navigationItem.hidesSearchBarWhenScrolling = true
         }
         
-        if let previousCountry = CountryManager.shared.lastCountrySelected {
-            scrollToCountry(previousCountry)
-        }
+//        if let previousCountry = CountryManager.shared.lastCountrySelected {
+//            scrollToCountry(previousCountry)
+//        }
     }
     
     private func setUpTableView() {
@@ -205,15 +208,15 @@ internal extension CountryPickerVC {
     func loadCountries() {
         countries = CountryManager.shared.allCountries(favoriteCountriesLocaleIdentifiers)
     }
-    func scrollToCountry(_ country: Country, animated: Bool = false) {
-        
-        let countryMatchIndex = countries.firstIndex(where: { $0.countryCode == country.countryCode})
-        
-        if let itemIndexPath = countryMatchIndex {
-            let previousCountryIndex = IndexPath(item: itemIndexPath, section: 0)
-            tableView.scrollToRow(at: previousCountryIndex, at: .middle, animated: animated)
-        }
-    }
+//    func scrollToCountry(_ country: Country, animated: Bool = false) {
+//
+//        let countryMatchIndex = countries.firstIndex(where: { $0.countryCode == country.countryCode})
+//
+//        if let itemIndexPath = countryMatchIndex {
+//            let previousCountryIndex = IndexPath(item: itemIndexPath, section: 0)
+//            tableView.scrollToRow(at: previousCountryIndex, at: .middle, animated: animated)
+//        }
+//    }
 }
 
 // MARK: - TableView DataSource
@@ -230,8 +233,6 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.accessoryType = .none
-        cell.checkMarkImageView.isHidden = true
-        cell.checkMarkImageView.image = checkMarkImage
         
         var country: Country
         
@@ -241,9 +242,8 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
             country = countries[indexPath.row]
         }
         
-        if let lastSelectedCountry = CountryManager.shared.lastCountrySelected {
-            cell.checkMarkImageView.isHidden = country.countryCode == lastSelectedCountry.countryCode ? false : true
-        }
+//        if let lastSelectedCountry = CountryManager.shared.lastCountrySelected {
+//        }
         
         cell.country = country
         setUpCellProperties(cell: cell)
@@ -279,7 +279,7 @@ extension CountryPickerVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         callBack?(selectedCountry)
-        CountryManager.shared.lastCountrySelected = selectedCountry
+//        CountryManager.shared.lastCountrySelected = selectedCountry
             
         dismiss(animated: dismissWithAnimation, completion: nil)
     }

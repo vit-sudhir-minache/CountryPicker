@@ -49,7 +49,7 @@ open class CountryManager {
     }
     
     
-    internal var lastCountrySelected: Country?
+//    internal var lastCountrySelected: Country?
     internal let defaultFilter: CountryFilterOption = .countryName
     internal var filters: Set<CountryFilterOption> = [.countryName]
         
@@ -86,9 +86,9 @@ public extension CountryManager {
         favoriteCountriesLocaleIdentifiers
             .compactMap { country(withCode: $0) } + countries
     }
-    func resetLastSelectedCountry() {
-        lastCountrySelected = nil
-    }
+//    func resetLastSelectedCountry() {
+//        lastCountrySelected = nil
+//    }
 }
 
 public extension CountryManager {

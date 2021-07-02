@@ -12,15 +12,6 @@ class CountryCell: UITableViewCell {
 
     static let reuseIdentifier = String(describing: CountryCell.self)
 
-    let checkMarkImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        return imageView
-    }()
-
     var flagStyle: CountryFlagStyle {
         return CountryFlagStyle.normal
     }
@@ -99,15 +90,12 @@ extension CountryCell {
     func setupViews() {
         
         countryFlagStackView.addArrangedSubview(flagImageView)
-        countryCheckStackView.addArrangedSubview(checkMarkImageView)
         
         countryInfoStackView.addArrangedSubview(nameLabel)
         countryInfoStackView.addArrangedSubview(diallingCodeLabel)
         
         countryContentStackView.addArrangedSubview(countryFlagStackView)
         countryContentStackView.addArrangedSubview(countryInfoStackView)
-        //MARK:- IF YOU NEED CHECKBOX SO JUS UNCOMMENT THIS CODE 
-//        countryContentStackView.addArrangedSubview(countryCheckStackView)
         
         addSubview(countryContentStackView)
         addSubview(separatorLineView)
